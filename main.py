@@ -68,8 +68,6 @@ if __name__ == "__main__":
     user_input = input("Введите ссылку: ")
     print(is_shorten_links(user_input))
 
-# https://3dnews.ru
-# https://vk.cc/6P5CG7
 
 
 
