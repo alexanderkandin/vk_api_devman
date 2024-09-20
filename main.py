@@ -1,47 +1,26 @@
 import requests
 import os
-
-access_token = os.getenv("TOKEN_VK")
+from urllib.parse import urlparse
 
 
 def is_shorten_links(url):
-    try:
-        response = requests.head(url, allow_redirects=True)
-        check_url = response.url
-        if check_url==url+"/":
-            data = shorten_link(access_token,url)
-        else:
-            data = click_counter(access_token,url)
-        return data
-    except requests.exceptions.HTTPError:
-        print('HTTPError')
-        return None
-    except Exception as err:
-        print(f'Произошла ошибка: {err}')
-        return None
-
+    short_domain = "vk.cc"
+    parcel_url = urlparse(url).netloc
+    return parcel_url == short_domain
 
 
 def shorten_link(token,url):
-    url_src= 'https://api.vk.ru/method/utils.getShortLink'
-    payload = {
-        'url' : url,
-        "access_token" : token,
-        'v': '5.131'
+        url_src= 'https://api.vk.ru/method/utils.getShortLink'
+        payload = {
+            'url' : url,
+            "access_token" : token,
+            'v': '5.131'
 
-    }
-    try:
+        }
         response = requests.get(f'{url_src}', params=payload)
         response.raise_for_status()
-        data = response.json()
-        # print(f"Сокращенная ссылка: {data['response']['short_url']}")
-        return data['response']['short_url']
-    except requests.exceptions.HTTPError:
-        print('HTTPError')
-        return None
-    except Exception as err:
-        print(f'Произошла ошибка: {err}')
-        return None
+        short_url = response.json()
+        return short_url['response']['short_url']
 
 
 def click_counter(token,url):
@@ -51,22 +30,26 @@ def click_counter(token,url):
         'access_token': access_token,
         'v': '5.131'
     }
-    try:
-        response = requests.get(url_src, params=payload)
-        data = response.json()
-        return data['response']['stats'][0]['views']
-    except requests.exceptions.HTTPError:
-        print('HTTPError')
-        return None
-    except Exception as err:
-        print(f'Произошла ошибка: {err}')
-        return None
+    response = requests.get(url_src, params=payload)
+    click_count= response.json()
+    if click_count['response']['stats']:
+        return click_count['response']['stats'][0]['views']
+    else:
+        return 0
+
 
 
 
 if __name__ == "__main__":
+    access_token = os.environ["VK_TOKEN"]
     user_input = input("Введите ссылку: ")
-    print(is_shorten_links(user_input))
+    try:
+        if is_shorten_links(user_input):
+            print(click_counter(access_token, user_input))
+        else:
+            print(shorten_link(access_token, user_input))
+    except requests.exceptions.RequestException as err:
+        print(f'Ошибка при выполнении запроса: {err}')
 
 
 
