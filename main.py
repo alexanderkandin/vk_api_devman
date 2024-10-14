@@ -1,4 +1,5 @@
 import requests
+from dotenv import load_dotenv
 import os
 from urllib.parse import urlparse
 
@@ -41,7 +42,8 @@ def click_counter(token,url):
 
 
 if __name__ == "__main__":
-    access_token = os.environ["VK_TOKEN"]
+    load_dotenv()
+    access_token = os.getenv("VK_TOKEN")
     user_input = input("Введите ссылку: ")
     try:
         if is_shorten_links(user_input):
