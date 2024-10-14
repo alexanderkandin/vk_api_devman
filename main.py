@@ -1,8 +1,15 @@
 import requests
+import argparse
+import sys
 from dotenv import load_dotenv
 import os
 from urllib.parse import urlparse
 
+
+def create_parser():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("user_url")
+    return parser
 
 def is_shorten_links(url):
     short_domain = "vk.cc"
@@ -44,12 +51,14 @@ def click_counter(token,url):
 if __name__ == "__main__":
     load_dotenv()
     access_token = os.getenv("VK_TOKEN")
-    user_input = input("Введите ссылку: ")
+    parser = create_parser()
+    user_input = parser.parse_args(sys.argv[1:])
+    # user_input = input("Введите ссылку: ")
     try:
-        if is_shorten_links(user_input):
-            print(click_counter(access_token, user_input))
+        if is_shorten_links(user_input.user_url):
+            print(click_counter(access_token, user_input.user_url))
         else:
-            print(shorten_link(access_token, user_input))
+            print(shorten_link(access_token, user_input.user_url))
     except requests.exceptions.RequestException as err:
         print(f'Ошибка при выполнении запроса: {err}')
 
