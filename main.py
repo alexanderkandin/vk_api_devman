@@ -18,7 +18,7 @@ def is_shorten_links(url):
     return parcel_url == short_domain
 
 
-def shorten_link(token,url):
+def get_shorten_url(token,url):
         url_src= 'https://api.vk.ru/method/utils.getShortLink'
         payload = {
             'url' : url,
@@ -32,7 +32,7 @@ def shorten_link(token,url):
         return short_url['response']['short_url']
 
 
-def click_counter(token,url):
+def get_click_counter(token,url):
     url_src= 'https://api.vk.com/method/utils.getLinkStats'
     payload = {
         'key': url.split('/')[-1],
@@ -56,9 +56,9 @@ def main():
     user_input = parser.parse_args(sys.argv[1:])
     try:
         if is_shorten_links(user_input.user_url):
-            print(click_counter(access_token, user_input.user_url))
+            print(get_click_counter(access_token, user_input.user_url))
         else:
-            print(shorten_link(access_token, user_input.user_url))
+            print(get_shorten_url(access_token, user_input.user_url))
     except requests.exceptions.RequestException as err:
         print(f'Ошибка при выполнении запроса: {err}')
 
