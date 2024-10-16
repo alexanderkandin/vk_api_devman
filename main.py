@@ -53,7 +53,6 @@ if __name__ == "__main__":
     access_token = os.getenv("VK_TOKEN")
     parser = create_parser()
     user_input = parser.parse_args(sys.argv[1:])
-    # user_input = input("Введите ссылку: ")
     try:
         if is_shorten_links(user_input.user_url):
             print(click_counter(access_token, user_input.user_url))
