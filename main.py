@@ -1,9 +1,10 @@
-import requests
 import argparse
-import sys
-from dotenv import load_dotenv
 import os
+import sys
 from urllib.parse import urlparse
+
+import requests
+from dotenv import load_dotenv
 
 
 def create_parser():
@@ -35,7 +36,7 @@ def click_counter(token,url):
     url_src= 'https://api.vk.com/method/utils.getLinkStats'
     payload = {
         'key': url.split('/')[-1],
-        'access_token': access_token,
+        'access_token': token,
         'v': '5.131'
     }
     response = requests.get(url_src, params=payload)
@@ -48,7 +49,7 @@ def click_counter(token,url):
 
 
 
-if __name__ == "__main__":
+def main():
     load_dotenv()
     access_token = os.getenv("VK_TOKEN")
     parser = create_parser()
@@ -60,6 +61,10 @@ if __name__ == "__main__":
             print(shorten_link(access_token, user_input.user_url))
     except requests.exceptions.RequestException as err:
         print(f'Ошибка при выполнении запроса: {err}')
+
+
+if __name__ == "__main__":
+    main()
 
 
 
